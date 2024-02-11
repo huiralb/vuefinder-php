@@ -186,10 +186,11 @@ class VueFinder
 
         $listContents = $this->manager
             ->listContents($dirname, true)
+            ->filter(fn (StorageAttributes $attributes) => $attributes->isFile() && $filter && fnmatch("*$filter*", $attributes->path()) )
             ->map(fn(StorageAttributes $attributes) => $attributes->jsonSerialize())
             ->toArray();
 
-        $files = array_values($this->files($listContents, $filter));
+        $files = array_values($this->files($listContents));
 
         $files = array_map(function($node) {
             $node['basename'] = basename($node['path']);
